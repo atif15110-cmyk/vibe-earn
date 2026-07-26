@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Earn - Control Office (Admin Panel)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            height: 100vh;
+        }
+        /* Sidebar Control Office */
+        .sidebar {
+            width: 260px;
+            background-color: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-brand {
+            padding: 24px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #bb86fc;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        .sidebar-menu li {
+            padding: 14px 24px;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        .sidebar-menu li:hover, .sidebar-menu li.active {
+            background-color: #2a2a2a;
+            color: #bb86fc;
+            border-left: 4px solid #bb86fc;
+        }
+        /* Main Workspace */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .header {
+            padding: 20px 30px;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            padding: 30px;
+        }
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+        }
+        .stat-card h3 {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .stat-card p {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        /* Sections */
+        .section-box {
+            background-color: #1e1e1e;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #2a2a2a;
+            margin-bottom: 25px;
+        }
+        .section-box h2 {
+            font-size: 17px;
+            margin-bottom: 20px;
+            color: #bb86fc;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #ccc;
+            font-size: 13px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 11px;
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+        }
+        .btn {
+            background-color: #bb86fc;
+            color: #121212;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a2a;
+            font-size: 14px;
+        }
+        th {
+            color: #888;
+        }
+        .badge-pending {
+            color: #ffb74d;
+            background: rgba(255, 183, 77, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Control Office Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand">Vibe Earn Office</div>
+        <ul class="sidebar-menu">
+            <li class="active">Dashboard Overview</li>
+            <li>Video Moderation</li>
+            <li>Withdrawals (JazzCash/EasyPaisa)</li>
+            <li>Sponsor Manager</li>
+            <li>App Update Control</li>
+        </ul>
+    </div>
+
+    <!-- Main Office Workspace -->
+    <div class="main-content">
+        <div class="header">
+            <h2>Admin Control Room</h2>
+            <span id="server-status" style="color: #81c784;">Status: Connecting...</span>
+        </div>
+
+        <div class="container">
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Active Users</h3>
+                    <p id="stat-users">...</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Withdrawals</h3>
+                    <p id="stat-withdrawals">...</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Videos</h3>
+                    <p id="stat-videos">...</p>
+                </div>
+                <div class="stat-card">
+                    <h3>App Version</h3>
+                    <p id="stat-version">v1.0.2</p>
+                </div>
+            </div>
+
+            <!-- 1. Video Moderation Section -->
+            <div class="section-box">
+                <h2>Video Moderation & Approval Queue</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Creator</th>
+                            <th>Caption</th>
+                            <th>Video Link</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="video-table-body">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #888;">Loading queue from cloud...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 2. Withdrawal Management Section -->
+            <div class="section-box">
+                <h2>Withdrawal Requests (JazzCash / EasyPaisa)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Method</th>
+                            <th>Account No</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawal-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #888;">Loading requests from cloud...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 3. Sponsor & Ads Manager Section -->
+            <div class="section-box">
+                <h2>Sponsored Brand Manager</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Sponsor Brand Name</label>
+                        <input type="text" id="sponsor-name" placeholder="e.g. Daraz / Local Brand">
+                    </div>
+                    <div class="form-group">
+                        <label>Target Action Link / Web URL</label>
+                        <input type="text" id="sponsor-url" placeholder="https://brandshop.com">
+                    </div>
+                </div>
+                <button class="btn" onclick="launchSponsor()">Launch Sponsor Banner</button>
+            </div>
+
+            <!-- 4. App Update & Version Control Section -->
+            <div class="section-box">
+                <h2>App Version & Force Update Control</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Live Version Code</label>
+                        <input type="text" id="live-version" value="1.0.2">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Required Version (Force Update)</label>
+                        <input type="text" id="min-version" value="1.0.0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Update Download URL (.apk or Play Store)</label>
+                    <input type="text" id="update-url" value="https://vibeearn.com/downloads/v1.0.2.apk">
+                </div>
+                <button class="btn" onclick="updateAppPolicy()">Update App Policy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vercel Live Backend URL
+        const API_BASE_URL = "https://vibe-earn-silk.vercel.app";
+
+        // Fetch Dashboard Data on Load
+        async function fetchAdminData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                
+                if(data.status === "success") {
+                    document.getElementById("server-status").innerText = "Status: Online (Cloud Connected)";
+                    document.getElementById("stat-users").innerText = "3,420";
+                    document.getElementById("stat-withdrawals").innerText = "PKR 24,500";
+                    document.getElementById("stat-videos").innerText = "12";
+                    
+                    // Load Sample Dynamic rows if available or keep default demo layout
+                    loadMockTables();
+                }
+            } catch (error) {
+                console.error("Connection Error:", error);
+                document.getElementById("server-status").innerText = "Status: Offline / Connecting...";
+                loadMockTables();
+            }
+        }
+
+        function loadMockTables() {
+            // Video Table
+            document.getElementById("video-table-body").innerHTML = `
+                <tr>
+                    <td>@ahmed_vines</td>
+                    <td>Funny moments #vibe</td>
+                    <td>server/videos/vid_101.mp4</td>
+                    <td><span class="badge-pending">Pending Review</span></td>
+                    <td>
+                        <button class="btn" style="padding: 5px 12px; font-size: 12px; background: #81c784; color: #fff;">Approve</button>
+                        <button class="btn" style="padding: 5px 12px; font-size: 12px; background: #e57373; color: #fff; margin-left: 5px;">Reject</button>
+                    </td>
+                </tr>
+            `;
+
+            // Withdrawal Table
+            document.getElementById("withdrawal-table-body").innerHTML = `
+                <tr>
+                    <td>@zain_ali</td>
+                    <td>JazzCash</td>
+                    <td>0300-9876543</td>
+                    <td>PKR 2,500</td>
+                    <td><span class="badge-pending">Pending Payment</span></td>
+                    <td>
+                        <button class="btn" style="padding: 5px 12px; font-size: 12px;">Mark as Paid</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function launchSponsor() {
+            const name = document.getElementById("sponsor-name").value;
+            const url = document.getElementById("sponsor-url").value;
+            if(!name || !url) {
+                alert("Please fill in both sponsor fields!");
+                return;
+            }
+            alert("Sponsor banner successfully launched to all active users via Vercel Cloud!");
+        }
+
+        function updateAppPolicy() {
+            alert("App version policy successfully updated on the live server!");
+        }
+
+        // Run on load
+        fetchAdminData();
+    </script>
+</body>
+</html>

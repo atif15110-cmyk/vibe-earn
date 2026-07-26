@@ -1,0 +1,12 @@
+{
+  "name": "vibe-earn-backend",
+  "version": "1.0.0",
+  "description": "Backend server for Vibe Earn app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  }
+}
